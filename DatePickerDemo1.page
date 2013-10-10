@@ -1,0 +1,112 @@
+<apex:page title="Date Picker Demo 1" tabStyle="Special_Event__c" controller="DatePickerDemo1Controller" sidebar="false">
+
+    <head> 
+        <apex:stylesheet value="https://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css"  />
+        <apex:includeScript value="https://code.jquery.com/jquery-1.9.1.js" />
+        <apex:includeScript value="https://code.jquery.com/ui/1.10.3/jquery-ui.js" />
+    </head>
+
+    <body>
+        <script type="text/javascript">
+      
+            j$ = jQuery.noConflict();
+        
+            j$(document).ready(function() {
+                j$( "#event_start_date" ).datepicker({
+                    defaultDate: "+1w",
+                    changeMonth: true,
+                    changeYear: true,
+                    numberOfMonths: 1,
+                    dateFormat:"mm-dd-yy",
+                    altField: "#event_start_date_alternate",
+                    altFormat: "yy-mm-dd",
+                    showAnim: "slide"
+                })
+            });
+           
+
+            function buildSOQLQuery() {
+            
+                queryBuilder(
+                    j$("#name").val(),
+                    j$("#event_start_date_alternate").val()  //we need to pass the alternate field because it has the right date format
+                );
+            }
+      
+            function clearQuery() {
+                
+                j$("#name").val('');
+                j$("#event_start_date").val('');
+                j$("#event_start_date_alternate").val('');
+              
+                //Reset to the default query
+                buildSOQLQuery();
+            }
+            
+        </script>
+
+
+        <apex:form >
+            <apex:pageMessages id="errors" />
+            <apex:pageBlock title="Date Picker Demo 1" mode="edit">
+                
+                <table width="100%" border="0">
+                    <tr>  
+                        <td width="24%" valign="top">
+                            <apex:pageBlock title="Parameters" mode="edit" id="criteria">
+                                
+                                <apex:actionFunction name="queryBuilder" action="{!buildQueryString}" rerender="queryString,errors">
+                                    <apex:param name="name" value="" />
+                                    <apex:param name="event_start_date" value="" />
+                                </apex:actionFunction>
+ 
+                                <input type="hidden" name="event_start_date_alternate" id="event_start_date_alternate" />
+                                
+                                <table cellpadding="2" cellspacing="2">
+                                    <tr>
+                                        <td style="font-weight:bold;width:200px;">
+                                            <label for="name">Event Name (contains)</label>
+                                        </td>
+                                        <td>
+                                            <input type="text" id="name" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight:bold;">
+                                            <label for="event_start_date">Event Start Date (on/after)</label>
+                                        </td>
+                                        <td>
+                                            <input type="text" name="event_start_date" id="event_start_date" />
+                                        </td>
+                                    </tr>
+                                    
+                                </table>
+                                
+                                <div style="text-align:center">
+                                    <p />
+                            
+                                    <apex:commandButton value="Build SOQL Query" onclick="buildSOQLQuery();return false;" />
+                                    <apex:commandButton value="Clear Parameters" onclick="clearQuery(); return false;" />
+                                </div>
+                            
+                            </apex:pageBlock>
+ 
+                        </td>
+                        <td width="76%" valign="top">
+                            <apex:pageBlock title="SOQL Query" id="queryString">
+                                <apex:outputText value="{!soqlQuery}" />           
+                            </apex:pageBlock> 
+                        </td>
+                    </tr>
+                </table>
+                
+                   
+            </apex:pageBlock>
+ 
+        </apex:form>
+
+
+    </body>
+  
+
+</apex:page>
